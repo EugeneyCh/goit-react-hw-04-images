@@ -78,6 +78,7 @@ function ImageGallery({ searchQuery }) {
     setIsLoading(true);
 
     getFetchImages(searchQuery);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   useEffect(() => {
@@ -87,6 +88,7 @@ function ImageGallery({ searchQuery }) {
       // console.log(searchQuery);
     }
     // console.log('Changed  current page', currentPage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
   const toggleModal = () => {
