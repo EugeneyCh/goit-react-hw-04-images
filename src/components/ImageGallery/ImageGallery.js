@@ -12,10 +12,13 @@ function ImageGallery({ searchQuery }) {
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null);
+  console.log('Props searchQuery is ', searchQuery);
 
-  const createSearchOptions = () => {
+  const createSearchOptions = (searchQuery, currentPage = 1) => {
     const BASE_URL = 'https://pixabay.com/api/';
     const My_API_key = '35792081-ad86e3eac8072124d950161bb';
+    console.log('SearchQuerry in line 20 is', searchQuery);
+
     const options = new URLSearchParams({
       key: My_API_key,
       q: searchQuery,
@@ -23,7 +26,7 @@ function ImageGallery({ searchQuery }) {
       orientation: 'horizontal',
       safesearch: true,
       page: currentPage,
-      per_page: 12,
+      per_page: 4,
     });
     console.log('SearchQuerry is', searchQuery);
     console.log('Query word is:', BASE_URL + `?` + options.toString());
@@ -48,21 +51,49 @@ function ImageGallery({ searchQuery }) {
   };
 
   const handleClickLoadMore = () => {
+    setIsLoading(true);
     setCurrentPage(currentPage + 1);
   };
 
   useEffect(() => {
-    console.log('Changed  current page');
-    getFetchImages();
-    console.log('Changed searchQuerry');
+    // Checking searchQuery to empty query
+    if (searchQuery.trim() === '') {
+      console.log('Checked to empty ', searchQuery);
+      return;
+    }
+    // console.log('Changed  current page');
+    // getFetchImages();
+    console.log('Changed searchQuerry', searchQuery);
     setCurrentPage(1);
     setPictures([]);
+    // setCurrentPage(prevPage => {
+    //   if (prevPage !== 1) {
+    //     return 1;
+    //   }
+    //   return prevPage;
+    // });
     console.log('Current Page must be 1', 'Page is', currentPage);
 
-    getFetchImages();
-    console.log('Render new querry');
-    console.log(searchQuery);
-  }, [searchQuery, currentPage]);
+    console.log('Render new querry', searchQuery);
+    // console.log(searchQuery);
+    setIsLoading(true);
+
+    getFetchImages(searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    if (currentPage > 1) {
+      getFetchImages(searchQuery);
+      console.log('Render next page', currentPage);
+      console.log(searchQuery);
+    }
+    console.log('Changed  current page', currentPage);
+    //  getFetchImages();
+    //  console.log('Changed searchQuerry');
+    // setCurrentPage(1);
+    // setPictures([]);
+    //  console.log('Current Page must be 1', 'Page is', currentPage);
+  }, [currentPage]);
 
   const toggleModal = () => {
     setSelectedImage(null);
@@ -99,7 +130,7 @@ function ImageGallery({ searchQuery }) {
 }
 
 ImageGallery.propTypes = {
-  searchQuerry: PropTypes.string.isRequired,
+  searchQuery: PropTypes.string.isRequired,
 };
 
 export default ImageGallery;

@@ -10,7 +10,7 @@ function App() {
   const [state, setState] = useState('');
 
   const handleFormSubmit = searchQuery => {
-    setState({ searchQuery });
+    setState(searchQuery);
   };
 
   return (
