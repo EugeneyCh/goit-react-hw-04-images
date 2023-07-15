@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 const modalRoot = document.querySelector('#modal-root');
 
 function Modal({ image, onClose }) {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => {
