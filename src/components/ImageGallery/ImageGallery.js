@@ -17,7 +17,7 @@ function ImageGallery({ searchQuery }) {
   const createSearchOptions = (searchQuery, currentPage = 1) => {
     const BASE_URL = 'https://pixabay.com/api/';
     const My_API_key = '35792081-ad86e3eac8072124d950161bb';
-    console.log('SearchQuerry in line 20 is', searchQuery);
+    // console.log('SearchQuerry in line 20 is', searchQuery);
 
     const options = new URLSearchParams({
       key: My_API_key,
@@ -28,8 +28,8 @@ function ImageGallery({ searchQuery }) {
       page: currentPage,
       per_page: 4,
     });
-    console.log('SearchQuerry is', searchQuery);
-    console.log('Query word is:', BASE_URL + `?` + options.toString());
+    // console.log('SearchQuerry is', searchQuery);
+    // console.log('Query word is:', BASE_URL + `?` + options.toString());
     return BASE_URL + `?` + options.toString();
   };
 
@@ -39,10 +39,10 @@ function ImageGallery({ searchQuery }) {
     try {
       const { data } = await axios.get(createSearchOptions(searchQuery));
       const newPictures = data.hits;
-      console.log('New pictures');
+      // console.log('New pictures');
       setTotalCount(data.totalHits);
       setPictures(prevPictures => [...prevPictures, ...newPictures]);
-      console.log('Pictures in state', pictures);
+      // console.log('Pictures in state', pictures);
     } catch (error) {
       console.error(error);
     } finally {
@@ -62,7 +62,6 @@ function ImageGallery({ searchQuery }) {
       return;
     }
     // console.log('Changed  current page');
-    // getFetchImages();
     console.log('Changed searchQuerry', searchQuery);
     setCurrentPage(1);
     setPictures([]);
@@ -72,9 +71,9 @@ function ImageGallery({ searchQuery }) {
     //   }
     //   return prevPage;
     // });
-    console.log('Current Page must be 1', 'Page is', currentPage);
+    // console.log('Current Page must be 1', 'Page is', currentPage);
 
-    console.log('Render new querry', searchQuery);
+    // console.log('Render new querry', searchQuery);
     // console.log(searchQuery);
     setIsLoading(true);
 
@@ -84,15 +83,10 @@ function ImageGallery({ searchQuery }) {
   useEffect(() => {
     if (currentPage > 1) {
       getFetchImages(searchQuery);
-      console.log('Render next page', currentPage);
-      console.log(searchQuery);
+      // console.log('Render next page', currentPage);
+      // console.log(searchQuery);
     }
-    console.log('Changed  current page', currentPage);
-    //  getFetchImages();
-    //  console.log('Changed searchQuerry');
-    // setCurrentPage(1);
-    // setPictures([]);
-    //  console.log('Current Page must be 1', 'Page is', currentPage);
+    // console.log('Changed  current page', currentPage);
   }, [currentPage]);
 
   const toggleModal = () => {
