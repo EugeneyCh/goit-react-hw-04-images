@@ -54,15 +54,15 @@ function ImageGallery({ searchQuery }) {
     setIsLoading(true);
     setCurrentPage(currentPage + 1);
   };
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     // Checking searchQuery to empty query
     if (searchQuery.trim() === '') {
-      console.log('Checked to empty ', searchQuery);
+      // console.log('Checked to empty ', searchQuery);
       return;
     }
     // console.log('Changed  current page');
-    console.log('Changed searchQuerry', searchQuery);
+    // console.log('Changed searchQuerry', searchQuery);
     setCurrentPage(1);
     setPictures([]);
     // setCurrentPage(prevPage => {
@@ -71,7 +71,7 @@ function ImageGallery({ searchQuery }) {
     //   }
     //   return prevPage;
     // });
-    // console.log('Current Page must be 1', 'Page is', currentPage);
+    console.log('Current Page must be 1', 'Page is', currentPage);
 
     // console.log('Render new querry', searchQuery);
     // console.log(searchQuery);
