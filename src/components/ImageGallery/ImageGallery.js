@@ -26,7 +26,7 @@ function ImageGallery({ searchQuery }) {
       orientation: 'horizontal',
       safesearch: true,
       page: currentPage,
-      per_page: 4,
+      per_page: 12,
     });
     // console.log('SearchQuerry is', searchQuery);
     // console.log('Query word is:', BASE_URL + `?` + options.toString());
