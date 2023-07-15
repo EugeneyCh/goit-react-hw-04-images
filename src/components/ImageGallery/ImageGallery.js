@@ -14,7 +14,7 @@ function ImageGallery({ searchQuery }) {
   const [selectedImage, setSelectedImage] = useState(null);
   console.log('Props searchQuery is ', searchQuery);
 
-  const createSearchOptions = (searchQuery, currentPage = 1) => {
+  const createSearchOptions = searchQuery => {
     const BASE_URL = 'https://pixabay.com/api/';
     const My_API_key = '35792081-ad86e3eac8072124d950161bb';
     // console.log('SearchQuerry in line 20 is', searchQuery);
