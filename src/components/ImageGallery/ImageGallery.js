@@ -13,6 +13,7 @@ function ImageGallery({ searchQuery }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null);
   console.log('Props searchQuery is ', searchQuery);
+  console.log('currentPage is', currentPage);
 
   const createSearchOptions = searchQuery => {
     const BASE_URL = 'https://pixabay.com/api/';
@@ -52,18 +53,22 @@ function ImageGallery({ searchQuery }) {
 
   const handleClickLoadMore = () => {
     setIsLoading(true);
-    setCurrentPage(currentPage + 1);
+    setCurrentPage(currentPage => currentPage + 1);
   };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   useEffect(() => {
-    // Checking searchQuery to empty query
     if (searchQuery.trim() === '') {
-      // console.log('Checked to empty ', searchQuery);
       return;
     }
     // console.log('Changed  current page');
-    // console.log('Changed searchQuerry', searchQuery);
-    setCurrentPage(1);
+    console.log('Changed searchQuerry', searchQuery);
+
+    // if (prevProps.searchQuerry !== this.props.searchQuerry) {
+    //   this.setState({ currentPage: 1, pictures: [] }, () => {
+    //     this.getFetchImages();
+    //     // console.log('Render new query');
+    //   });
+    setCurrentPage(() => 1);
     setPictures([]);
     // setCurrentPage(prevPage => {
     //   if (prevPage !== 1) {
@@ -73,22 +78,21 @@ function ImageGallery({ searchQuery }) {
     // });
     console.log('Current Page must be 1', 'Page is', currentPage);
 
-    // console.log('Render new querry', searchQuery);
-    // console.log(searchQuery);
     setIsLoading(true);
 
-    getFetchImages(searchQuery);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // getFetchImages(searchQuery);
+
+    const fetchData = async () => {
+      await getFetchImages(searchQuery);
+    };
+
+    fetchData();
   }, [searchQuery]);
 
   useEffect(() => {
     if (currentPage > 1) {
       getFetchImages(searchQuery);
-      // console.log('Render next page', currentPage);
-      // console.log(searchQuery);
     }
-    // console.log('Changed  current page', currentPage);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
   const toggleModal = () => {
