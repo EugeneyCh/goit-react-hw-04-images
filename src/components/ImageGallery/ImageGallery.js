@@ -87,12 +87,14 @@ function ImageGallery({ searchQuery }) {
     };
 
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   useEffect(() => {
     if (currentPage > 1) {
       getFetchImages(searchQuery);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
   const toggleModal = () => {
