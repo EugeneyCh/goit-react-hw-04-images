@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import css from './ImageGallery.module.css';
 import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
@@ -12,14 +12,16 @@ function ImageGallery({ searchQuery }) {
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null);
-  console.log('Props searchQuery is ', searchQuery);
-  console.log('currentPage is', currentPage);
 
-  const createSearchOptions = searchQuery => {
+  /**
+   *
+   * @param {*} searchQuery
+   * @param {*} currentPage
+   * @returns searchUrl
+   */
+  const createSearchOptions = (searchQuery, currentPage) => {
     const BASE_URL = 'https://pixabay.com/api/';
     const My_API_key = '35792081-ad86e3eac8072124d950161bb';
-    // console.log('SearchQuerry in line 20 is', searchQuery);
-
     const options = new URLSearchParams({
       key: My_API_key,
       q: searchQuery,
@@ -29,21 +31,43 @@ function ImageGallery({ searchQuery }) {
       page: currentPage,
       per_page: 12,
     });
-    // console.log('SearchQuerry is', searchQuery);
-    // console.log('Query word is:', BASE_URL + `?` + options.toString());
     return BASE_URL + `?` + options.toString();
   };
 
-  const getFetchImages = async () => {
-    setIsLoading(true);
+  const searchOptions = createSearchOptions(searchQuery, currentPage);
 
+  const handleClickLoadMore = () => {
+    setCurrentPage(currentPage => currentPage + 1);
+  };
+
+  /**
+   * clears images array and counter of pages
+   * @param {*} searchQuery
+   * @returns boolean is search Query
+   */
+  const clearPages = (searchQuery) => {
+    if (searchQuery) {
+      setCurrentPage(() => 1);
+      setPictures([]);
+    }
+  };
+
+  /**
+   * memo for clearPages
+   */
+  useMemo(() => clearPages(searchQuery), [searchQuery]);
+
+  /**
+   * gets images
+   * @param {*} searchOptions
+   */
+  const getFetchImages = async searchOptions => {
+    setIsLoading(true);
     try {
-      const { data } = await axios.get(createSearchOptions(searchQuery));
+      const { data } = await axios.get(searchOptions);
       const newPictures = data.hits;
-      // console.log('New pictures');
       setTotalCount(data.totalHits);
       setPictures(prevPictures => [...prevPictures, ...newPictures]);
-      // console.log('Pictures in state', pictures);
     } catch (error) {
       console.error(error);
     } finally {
@@ -51,51 +75,9 @@ function ImageGallery({ searchQuery }) {
     }
   };
 
-  const handleClickLoadMore = () => {
-    setIsLoading(true);
-    setCurrentPage(currentPage => currentPage + 1);
-  };
-
   useEffect(() => {
-    if (searchQuery.trim() === '') {
-      return;
-    }
-    // console.log('Changed  current page');
-    console.log('Changed searchQuerry', searchQuery);
-
-    // if (prevProps.searchQuerry !== this.props.searchQuerry) {
-    //   this.setState({ currentPage: 1, pictures: [] }, () => {
-    //     this.getFetchImages();
-    //     // console.log('Render new query');
-    //   });
-    setCurrentPage(() => 1);
-    setPictures([]);
-    // setCurrentPage(prevPage => {
-    //   if (prevPage !== 1) {
-    //     return 1;
-    //   }
-    //   return prevPage;
-    // });
-    console.log('Current Page must be 1', 'Page is', currentPage);
-
-    setIsLoading(true);
-
-    // getFetchImages(searchQuery);
-
-    const fetchData = async () => {
-      await getFetchImages(searchQuery);
-    };
-
-    fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery]);
-
-  useEffect(() => {
-    if (currentPage > 1) {
-      getFetchImages(searchQuery);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPage]);
+    getFetchImages(searchOptions);
+  }, [searchOptions]);
 
   const toggleModal = () => {
     setSelectedImage(null);
@@ -116,7 +98,6 @@ function ImageGallery({ searchQuery }) {
           ))}
       </ul>
       {isLoading && <Loader />}
-
       {!isLoading && pictures && totalCount - (currentPage - 1) * 12 >= 12 && (
         <button
           type="button"
@@ -128,7 +109,7 @@ function ImageGallery({ searchQuery }) {
       )}
       {selectedImage && <Modal image={selectedImage} onClose={toggleModal} />}
     </>
-  );
+  )
 }
 
 ImageGallery.propTypes = {
