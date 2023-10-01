@@ -7,18 +7,18 @@ import { useState } from 'react';
 import ImageGallery from './ImageGallery/ImageGallery';
 
 function App() {
-  const [state, setState] = useState('');
+  const [query, setQuery] = useState('');
   // const [currentPage, setCurrentPage] = useState(1);
 
   const handleFormSubmit = searchQuery => {
-    setState(searchQuery);
+    setQuery(searchQuery);
     // setCurrentPage(1);
   };
 
   return (
     <div className={css.app}>
       <Searchbar onSubmit={handleFormSubmit} />
-      <ImageGallery searchQuery={state} />
+      <ImageGallery searchQuery={query} firstPage={1} />
       <ToastContainer position="top-center" autoClose={2000} />
     </div>
   );

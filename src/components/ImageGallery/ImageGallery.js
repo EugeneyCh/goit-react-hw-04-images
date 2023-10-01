@@ -3,47 +3,27 @@ import PropTypes from 'prop-types';
 import css from './ImageGallery.module.css';
 import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
 import axios from 'axios';
+import { createSearchOptions } from 'components/Utilities/utilities';
 import Loader from '../Loader/Loader';
 import Modal from 'components/Modal/Modal';
 
-function ImageGallery({ searchQuery }) {
+function ImageGallery({ searchQuery, firstPage }) {
   const [pictures, setPictures] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null);
-  console.log('Props searchQuery is ', searchQuery);
-  console.log('currentPage is', currentPage);
+  // console.log('Props searchQuery is ', searchQuery);
+  // console.log('currentPage is', currentPage);
 
-  const createSearchOptions = searchQuery => {
-    const BASE_URL = 'https://pixabay.com/api/';
-    const My_API_key = '35792081-ad86e3eac8072124d950161bb';
-    // console.log('SearchQuerry in line 20 is', searchQuery);
-
-    const options = new URLSearchParams({
-      key: My_API_key,
-      q: searchQuery,
-      image_type: 'photo',
-      orientation: 'horizontal',
-      safesearch: true,
-      page: currentPage,
-      per_page: 12,
-    });
-    // console.log('SearchQuerry is', searchQuery);
-    // console.log('Query word is:', BASE_URL + `?` + options.toString());
-    return BASE_URL + `?` + options.toString();
-  };
-
-  const getFetchImages = async () => {
+  const getFetchImages = async (query, currPage) => {
     setIsLoading(true);
 
     try {
-      const { data } = await axios.get(createSearchOptions(searchQuery));
+      const { data } = await axios.get(createSearchOptions(query, currPage));
       const newPictures = data.hits;
-      // console.log('New pictures');
       setTotalCount(data.totalHits);
       setPictures(prevPictures => [...prevPictures, ...newPictures]);
-      // console.log('Pictures in state', pictures);
     } catch (error) {
       console.error(error);
     } finally {
@@ -56,43 +36,23 @@ function ImageGallery({ searchQuery }) {
     setCurrentPage(currentPage => currentPage + 1);
   };
 
+  const element = document.documentElement;
+
   useEffect(() => {
     if (searchQuery.trim() === '') {
       return;
     }
-    // console.log('Changed  current page');
-    console.log('Changed searchQuerry', searchQuery);
-
-    // if (prevProps.searchQuerry !== this.props.searchQuerry) {
-    //   this.setState({ currentPage: 1, pictures: [] }, () => {
-    //     this.getFetchImages();
-    //     // console.log('Render new query');
-    //   });
-    setCurrentPage(() => 1);
+    setCurrentPage(1);
     setPictures([]);
-    // setCurrentPage(prevPage => {
-    //   if (prevPage !== 1) {
-    //     return 1;
-    //   }
-    //   return prevPage;
-    // });
-    console.log('Current Page must be 1', 'Page is', currentPage);
-
     setIsLoading(true);
-
-    // getFetchImages(searchQuery);
-
-    const fetchData = async () => {
-      await getFetchImages(searchQuery);
-    };
-
-    fetchData();
+    getFetchImages(searchQuery, 1);
+    element.scrollTop = 10;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
 
   useEffect(() => {
     if (currentPage > 1) {
-      getFetchImages(searchQuery);
+      getFetchImages(searchQuery, currentPage);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
