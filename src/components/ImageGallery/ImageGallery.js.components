@@ -1,0 +1,110 @@
+import { Component } from 'react';
+import PropTypes from 'prop-types';
+import css from './ImageGallery.module.css';
+import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
+import axios from 'axios';
+import Loader from '../Loader/Loader';
+import Modal from 'components/Modal/Modal';
+
+class ImageGallery extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: false,
+      pictures: [],
+      totalCount: 0,
+      currentPage: 1,
+      selectedImage: null,
+      isUpdate: false
+    }
+  }
+
+  createSearchOptions = (searchQuery, currentPage) => {
+    const BASE_URL = 'https://pixabay.com/api/';
+    const My_API_key = '35792081-ad86e3eac8072124d950161bb';
+    const options = new URLSearchParams({
+      key: My_API_key,
+      q: searchQuery,
+      image_type: 'photo',
+      orientation: 'horizontal',
+      safesearch: true,
+      page: currentPage,
+      per_page: 12,
+    });
+    return BASE_URL + `?` + options.toString();
+  };
+
+  handleClickLoadMore = () => {
+    this.setState({currentPage: this.state.currentPage + 1}, () => {
+      this.getFetchImages(this.props.searchQuery, this.state.currentPage)
+    });
+  };
+
+  toggleModal = () => {
+    this.setState({selectedImage: null})
+
+  };
+
+  getFetchImages = async (searchQuery, currentPage) => {
+    this.setState({isLoading: true});
+    const searchOptions = this.createSearchOptions(searchQuery, currentPage);
+    try {
+      const { data } = await axios.get(searchOptions);
+      const newPictures = data.hits;
+      this.setState({totalCount: data.totalHits, pictures: [...this.state.pictures, ...newPictures]});
+    } catch (error) {
+      console.error(error);
+    } finally {
+      this.setState({isLoading: false});
+    }
+  };
+
+  componentDidMount() {
+    this.getFetchImages(this.props.searchQuery, this.state.currentPage);
+    return true;
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.searchQuery !== this.props.searchQuery) {
+      this.setState({pictures: [], currentPage: 1}, () => {
+        this.getFetchImages(this.props.searchQuery, this.state.currentPage)
+      })
+    }
+  }
+
+  render() {
+    return (
+      <>
+        <ul className={css.imageGallery}>
+          {this.state.pictures &&
+            this.state.pictures.map(picture => (
+              <ImageGalleryItem
+                key={picture.id}
+                image={picture.webformatURL}
+                onClick={() => {
+                  this.setState({selectedImage: picture.largeImageURL});
+                }}
+              />
+            ))}
+        </ul>
+        {this.state.isLoading && <Loader />}
+        {!this.state.isLoading && this.state.pictures && this.state.totalCount - (this.state.currentPage - 1) * 12 >= 12 && (
+          <button
+            type="button"
+            className={css.button}
+            onClick={this.handleClickLoadMore}
+          >
+            Load More
+          </button>
+        )}
+        {this.state.selectedImage && <Modal image={this.state.selectedImage} onClose={this.toggleModal} />}
+      </>
+    )
+  }
+}
+
+ImageGallery.propTypes = {
+  searchQuery: PropTypes.string.isRequired,
+};
+
+export default ImageGallery;
