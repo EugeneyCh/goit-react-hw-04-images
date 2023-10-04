@@ -11,8 +11,9 @@ function ImageGalleryItem({ keyItem, image, onClick }) {
 }
 
 ImageGalleryItem.propTypes = {
-  // key: PropTypes.number.isRequired,
+  keyItem: PropTypes.number,
   image: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
 };
 
 export default ImageGalleryItem;
