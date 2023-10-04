@@ -7,6 +7,10 @@ import { createSearchOptions } from 'components/Utilities/utilities';
 import Loader from '../Loader/Loader';
 import Modal from 'components/Modal/Modal';
 
+
+/***
+ * firstPage - нет необходимости в этом пропсе
+ */
 function ImageGallery({ searchQuery, firstPage }) {
   const [pictures, setPictures] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
@@ -16,6 +20,8 @@ function ImageGallery({ searchQuery, firstPage }) {
   // console.log('Props searchQuery is ', searchQuery);
   // console.log('currentPage is', currentPage);
 
+
+//* start 1 ********************* */
   const getFetchImages = async (query, currPage) => {
     setIsLoading(true);
 
@@ -30,13 +36,23 @@ function ImageGallery({ searchQuery, firstPage }) {
       setIsLoading(false);
     }
   };
+//* end 1 *********************** */
+
+
 
   const handleClickLoadMore = () => {
     setIsLoading(true);
     setCurrentPage(currentPage => currentPage + 1);
   };
 
+  /**
+   * Не совсем понятно назначение строки 40, этим действием мы делаем элемент не контролируемым,
+   * что не рекомендуется
+   */
   const element = document.documentElement;
+  console.log(document)
+
+//* start 2 ********************* */
 
   useEffect(() => {
     if (searchQuery.trim() === '') {
@@ -56,6 +72,17 @@ function ImageGallery({ searchQuery, firstPage }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
+
+//* end 2 *********************** */
+
+/**
+ * фрагменты 1 и 2 вынести в отдельный файл и пользовательский хук
+ * https://habr.com/ru/companies/otus/articles/729596/
+ *
+ *
+ *  * const [images, isLoading] = useGetImages(searchQuery, currentPage)
+ *
+ */
 
   const toggleModal = () => {
     setSelectedImage(null);
@@ -77,6 +104,7 @@ function ImageGallery({ searchQuery, firstPage }) {
       </ul>
       {isLoading && <Loader />}
 
+
       {!isLoading && pictures && totalCount - (currentPage - 1) * 12 >= 12 && (
         <button
           type="button"
@@ -90,6 +118,13 @@ function ImageGallery({ searchQuery, firstPage }) {
     </>
   );
 }
+
+/**
+ * totalCount - (currentPage - 1) * 12 >= 12   =>   currentPage < maxPage
+ * maxPage = totalCount % 12 ? totalCount % 12 : Math.ceil(totalCount / 12) + 1
+ * maxPage мемоизировать (useMemo))
+ *
+ * */
 
 ImageGallery.propTypes = {
   searchQuery: PropTypes.string.isRequired,
