@@ -18,7 +18,7 @@ function App() {
   return (
     <div className={css.app}>
       <Searchbar onSubmit={handleFormSubmit} />
-      <ImageGallery searchQuery={query} firstPage={1} />
+      <ImageGallery searchQuery={query} />
       <ToastContainer position="top-center" autoClose={2000} />
     </div>
   );
