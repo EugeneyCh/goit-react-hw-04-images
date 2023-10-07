@@ -1,16 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createSearchOptions } from 'components/Utilities/utilities';
 import axios from 'axios';
 
 export const useGetFetchImages = (query, currPage) => {
-  console.log('Search query is...', query);
   const [pictures, setPictures] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
   const getFetchImages = async (query, currPage) => {
-    if (query) {
-      setPictures([]);
+    if (!query) {
+      //   setPictures([]);
       return;
     }
 
@@ -27,11 +26,29 @@ export const useGetFetchImages = (query, currPage) => {
       setIsLoading(false);
     }
   };
-  useEffect(() => {
-    // if (currPage > 1) {
-    getFetchImages(query, currPage);
-    // }
-  }, [currPage, query]);
+  const clearPages = searchQuery => {
+    if (searchQuery) {
+      //   setCurrentPage(() => 1);
+      setPictures([]);
+    }
+  };
 
+  /**
+   * memo for clearPages
+   */
+  //   useMemo(() => clearPages(searchQuery), [searchQuery]);
+
+  useEffect(() => {
+    if (!query || query.trim() === '') {
+      setPictures([]);
+      return;
+    }
+    console.log('Query & page equal ', query, currPage);
+    if (currPage === 1) {
+      getFetchImages(query, 1);
+    } else {
+      getFetchImages(query, currPage);
+    }
+  }, [currPage, query]);
   return [pictures, isLoading, totalCount];
 };

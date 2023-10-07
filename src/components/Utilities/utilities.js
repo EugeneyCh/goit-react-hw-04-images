@@ -1,4 +1,5 @@
 export const createSearchOptions = (query, currPage) => {
+  console.log('Query & page are - ', query, currPage);
   const BASE_URL = 'https://pixabay.com/api/';
   const My_API_key = '35792081-ad86e3eac8072124d950161bb';
   const options = new URLSearchParams({
