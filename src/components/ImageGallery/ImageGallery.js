@@ -4,7 +4,7 @@ import css from './ImageGallery.module.css';
 import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
 import Loader from '../Loader/Loader';
 import Modal from 'components/Modal/Modal';
-import { useGetFetchImages } from 'components/Utilities/hooks';
+import { useGetFetchImages } from 'components/Hooks/hooks';
 
 function ImageGallery({ searchQuery }) {
   // const [pictures, setPictures] = useState([]);
