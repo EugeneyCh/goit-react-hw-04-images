@@ -7,8 +7,8 @@ import Modal from 'components/Modal/Modal';
 import { useGetFetchImages } from 'components/Hooks/hooks';
 
 function ImageGallery({ searchQuery }) {
-  // const [pictures, setPictures] = useState([]);
-  // const [totalCount, setTotalCount] = useState(0);
+  const [pictures, setPictures] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
   // const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -19,14 +19,14 @@ function ImageGallery({ searchQuery }) {
     // setIsLoading(true);
     setCurrentPage(currentPage => currentPage + 1);
   };
-  // useEffect(() => {
-  //   setCurrentPage(1);
-  // }, [searchQuery]);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
-  const [pictures, isLoading, totalCount] = useGetFetchImages(
-    searchQuery,
-    currentPage
-  );
+  const [data, isLoading] = useGetFetchImages(searchQuery, currentPage);
+  const newPictures = data.hits;
+  setTotalCount(data.totalHits);
+  setPictures(prevPictures => [...prevPictures, ...newPictures]);
 
   const toggleModal = () => {
     setSelectedImage(null);
