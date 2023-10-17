@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import css from './ImageGallery.module.css';
 import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
@@ -7,8 +7,8 @@ import Modal from 'components/Modal/Modal';
 import { useGetFetchImages } from 'components/Hooks/hooks';
 
 function ImageGallery({ searchQuery }) {
-  const [pictures, setPictures] = useState([]);
-  const [totalCount, setTotalCount] = useState(0);
+  // const [pictures, setPictures] = useState([]);
+  // const [totalCount, setTotalCount] = useState(0);
   // const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -16,17 +16,27 @@ function ImageGallery({ searchQuery }) {
   // console.log('currentPage is', currentPage);
 
   const handleClickLoadMore = () => {
+    nextPages();
     // setIsLoading(true);
     setCurrentPage(currentPage => currentPage + 1);
   };
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery]);
 
-  const [data, isLoading] = useGetFetchImages(searchQuery, currentPage);
-  const newPictures = data.hits;
-  setTotalCount(data.totalHits);
-  setPictures(prevPictures => [...prevPictures, ...newPictures]);
+  const [pictures, isLoading, totalCount, clearPages, nextPages] =
+    useGetFetchImages(searchQuery, currentPage);
+  // const newPictures = data.hits;
+  // setTotalCount(data.totalHits);
+  // setPictures(prevPictures => [...prevPictures, ...newPictures]);
+
+  // const memoClearPages = useMemo(
+  //   () => clearPages(searchQuery),
+  //   [searchQuery, clearPages]
+  // );
+
+  useEffect(() => {
+    setCurrentPage(() => 1);
+    // memoClearPages(searchQuery);
+    // clearPages();
+  }, [searchQuery]);
 
   const toggleModal = () => {
     setSelectedImage(null);
