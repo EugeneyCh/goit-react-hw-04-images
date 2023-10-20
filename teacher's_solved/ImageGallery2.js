@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import css from './ImageGallery.module.css';
 import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
@@ -7,23 +7,23 @@ import Modal from 'components/Modal/Modal';
 import { useGetFetchImages } from 'components/Hooks/hooks';
 
 function ImageGallery({ searchQuery }) {
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null);
 
   const handleClickLoadMore = () => {
-    nextPages();
+    setCurrentPage(currentPage => currentPage + 1);
   };
 
-  const [pictures, isLoading, totalCount, currentPage, clearPages, nextPages] =
-    useGetFetchImages(searchQuery);
+  // Еще вариант - пробросил функцию очистки в хук
+  const clearPages = () => {
+    setCurrentPage(() => 1);
+  };
 
-  // const memoClearPages = useMemo(
-  //   () => clearPages(searchQuery),
-  //   [searchQuery, clearPages]
-  // );
-
-  useEffect(() => {
-    clearPages();
-  }, [searchQuery]);
+  const [pictures, isLoading, hasNextPage] = useGetFetchImages(
+    searchQuery,
+    currentPage,
+    clearPages
+  );
 
   const toggleModal = () => {
     setSelectedImage(null);
@@ -43,9 +43,10 @@ function ImageGallery({ searchQuery }) {
             />
           ))}
       </ul>
+
       {isLoading && <Loader />}
 
-      {!isLoading && pictures && totalCount - (currentPage - 1) * 12 >= 12 && (
+      {!isLoading && pictures && hasNextPage && (
         <button
           type="button"
           className={css.button}
@@ -54,6 +55,7 @@ function ImageGallery({ searchQuery }) {
           Load More
         </button>
       )}
+
       {selectedImage && <Modal image={selectedImage} onClose={toggleModal} />}
     </>
   );
